@@ -23,7 +23,7 @@ import org.apache.lucene.search.ConstantScoreWeight;
 import org.apache.lucene.search.DocIdSetIterator;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
+//import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.Weight;
 import org.apache.lucene.util.Bits;
@@ -39,7 +39,7 @@ public class RandomQuery extends Query {
   }
 
   @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) throws IOException {
+  public Weight createWeight(IndexSearcher searcher, int scoreMode, float boost) throws IOException {
     return new ConstantScoreWeight(this, boost) {
       @Override
       public Scorer scorer(LeafReaderContext context) throws IOException {
@@ -85,7 +85,8 @@ public class RandomQuery extends Query {
           }
 
         };
-        return new ConstantScoreScorer(this, score(), ScoreMode.COMPLETE, iterator);
+        //return new ConstantScoreScorer(this, score(), scoreMode, iterator);
+        return new ConstantScoreScorer();
       }
 
       @Override

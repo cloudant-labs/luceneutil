@@ -36,7 +36,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.codecs.Codec;
 import org.apache.lucene.codecs.DocValuesFormat;
 import org.apache.lucene.codecs.PostingsFormat;
-import org.apache.lucene.codecs.lucene80.Lucene80Codec;
+//import org.apache.lucene.codecs.lucene80.Lucene80Codec;
 import org.apache.lucene.facet.FacetsConfig;
 import org.apache.lucene.facet.taxonomy.TaxonomyWriter;
 import org.apache.lucene.facet.taxonomy.directory.DirectoryTaxonomyWriter;
@@ -382,32 +382,32 @@ public final class Indexer {
       iwc.setIndexDeletionPolicy(NoDeletionPolicy.INSTANCE);
     }
     
-    final Codec codec = new Lucene80Codec() {
-        @Override
-        public PostingsFormat getPostingsFormatForField(String field) {
-          return PostingsFormat.forName(field.equals("id") ?
-                                        idFieldPostingsFormat : defaultPostingsFormat);
-        }
-
-        private final DocValuesFormat facetsDVFormat = DocValuesFormat.forName(facetDVFormatName);
-        //private final DocValuesFormat lucene42DVFormat = DocValuesFormat.forName("Lucene42");
-        //private final DocValuesFormat diskDVFormat = DocValuesFormat.forName("Disk");
-//        private final DocValuesFormat lucene45DVFormat = DocValuesFormat.forName("Lucene45");
-        private final DocValuesFormat directDVFormat = DocValuesFormat.forName("Direct");
-
-        @Override
-        public DocValuesFormat getDocValuesFormatForField(String field) {
-          if (facetFields.contains(field)) {
-            return facetsDVFormat;
-          } else {
-            // Use default DVFormat for all else:
-            // System.out.println("DV: field=" + field + " format=" + super.getDocValuesFormatForField(field));
-            return super.getDocValuesFormatForField(field);
-          }
-        }
-      };
-
-    iwc.setCodec(codec);
+//    final Codec codec = new Lucene80Codec() {
+//        @Override
+//        public PostingsFormat getPostingsFormatForField(String field) {
+//          return PostingsFormat.forName(field.equals("id") ?
+//                                        idFieldPostingsFormat : defaultPostingsFormat);
+//        }
+//
+//        private final DocValuesFormat facetsDVFormat = DocValuesFormat.forName(facetDVFormatName);
+//        //private final DocValuesFormat lucene42DVFormat = DocValuesFormat.forName("Lucene42");
+//        //private final DocValuesFormat diskDVFormat = DocValuesFormat.forName("Disk");
+////        private final DocValuesFormat lucene45DVFormat = DocValuesFormat.forName("Lucene45");
+//        private final DocValuesFormat directDVFormat = DocValuesFormat.forName("Direct");
+//
+//        @Override
+//        public DocValuesFormat getDocValuesFormatForField(String field) {
+//          if (facetFields.contains(field)) {
+//            return facetsDVFormat;
+//          } else {
+//            // Use default DVFormat for all else:
+//            // System.out.println("DV: field=" + field + " format=" + super.getDocValuesFormatForField(field));
+//            return super.getDocValuesFormatForField(field);
+//          }
+//        }
+//      };
+//
+//    iwc.setCodec(codec);
 
     System.out.println("IW config=" + iwc);
 
@@ -485,7 +485,7 @@ public final class Indexer {
       IndexWriterConfig iwc2 = new IndexWriterConfig(a);
       iwc2.setMergeScheduler(getMergeScheduler(indexingFailed, useCMS, maxConcurrentMerges, disableIOThrottle));
       iwc2.setMergePolicy(getMergePolicy(mergePolicy, useCFS));
-      iwc2.setCodec(codec);
+      //iwc2.setCodec(codec);
       iwc2.setUseCompoundFile(useCFS);
       iwc2.setMaxBufferedDocs(maxBufferedDocs);
       iwc2.setRAMBufferSizeMB(ramBufferSizeMB);

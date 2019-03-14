@@ -33,7 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.TotalHits;
+//import org.apache.lucene.search.TotalHits;
 import org.apache.lucene.util.BytesRef;
 
 // Serves up tasks from locally loaded list:
@@ -126,7 +126,7 @@ class LocalTaskSource implements TaskSource {
   }
 
   @Override
-  public void taskDone(Task task, long queueTimeNS, TotalHits toalHitCount) {
+  public void taskDone(Task task, long queueTimeNS, int totalHitCount) {
   }
 
   static List<Task> loadTasks(TaskParser taskParser, String filePath) throws IOException, ParseException {

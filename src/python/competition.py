@@ -238,15 +238,15 @@ class Competitor(object):
       os.makedirs(buildDir)
 
     # Try to be faster than ant; this may miss changes, e.g. a static final constant changed in core that is used in another module:
-    if common.getLatestModTime(perfSrc) <= common.getLatestModTime(buildDir, '.class'):
-      print('Skip compile: all .class are up to date')
-      return
+    #if common.getLatestModTime(perfSrc) <= common.getLatestModTime(buildDir, '.class'):
+    #  print('Skip compile: all .class are up to date')
+    #  return
 
     files = ['%s/perf/%s' % (perfSrc, x) for x in (
       'Args.java',
       'IndexState.java',
       'IndexThreads.java',
-      'NRTPerfTest.java',
+      #'NRTPerfTest.java',
       'Indexer.java',
       'KeepNoCommitsDeletionPolicy.java',
       'LineFileDocs.java',
@@ -255,11 +255,11 @@ class Competitor(object):
       'PKLookupTask.java',
       'PointsPKLookupTask.java',
       'PerfUtils.java',
-      'RandomQuery.java',
+      #'RandomQuery.java',
       'RemoteTaskSource.java',
       'RespellTask.java',
-      'SearchPerfTest.java',
-      'SearchTask.java',
+      #'SearchPerfTest.java',
+      #'SearchTask.java',
       'StatisticsHelper.java',
       'Task.java',
       'TaskParser.java',

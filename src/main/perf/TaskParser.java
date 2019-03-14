@@ -108,7 +108,8 @@ class TaskParser {
         final double filterPct = Double.parseDouble(m.group(1));
         // Splice out the filter string:
         text = (text.substring(0, m.start(0)) + text.substring(m.end(0), text.length())).trim();
-        filter = new RandomQuery(filterPct);
+        //filter = new RandomQuery(filterPct);
+        filter = null;
       } else {
         filter = null;
       }
@@ -365,9 +366,9 @@ class TaskParser {
         }
       */
 
-      task = new SearchTask(category, query2, sort, group, topN, doHilite, doStoredLoads, facets, doDrillSideways);
+      //task = new SearchTask(category, query2, sort, group, topN, doHilite, doStoredLoads, facets, doDrillSideways);
     }
 
-    return task;
+    return new RespellTask(new Term("fieldname", "text"));
   }
 }

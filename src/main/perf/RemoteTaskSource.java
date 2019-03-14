@@ -30,7 +30,7 @@ import java.util.Locale;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-import org.apache.lucene.search.TotalHits;
+//import org.apache.lucene.search.TotalHits;
 
 // Serves up tasks from remote client
 class RemoteTaskSource extends Thread implements TaskSource {
@@ -140,18 +140,19 @@ class RemoteTaskSource extends Thread implements TaskSource {
   }
 
   @Override
-  public void taskDone(Task task, long queueTimeNS, TotalHits totalHitCount) throws IOException {
+  public void taskDone(Task task, long queueTimeNS, int totalHitCount) throws IOException {
     if (out != null) {
-      try {
+      //try {
         // NOTE: can cause NPE here (we are not sync'd)
         // but caller will print & ignore it...
-        out.write(String.format(Locale.ENGLISH, "%8d:%9d:%11.1f", task.taskID, totalHitCount.value + (totalHitCount.relation == TotalHits.Relation.GREATER_THAN_OR_EQUAL_TO ? "+" : ""), queueTimeNS/1000000.0).getBytes("UTF-8"));
-      } catch (SocketException se) {
-        System.out.println("Ignore SocketException: " + se);
-        queue.clear();
-      } catch (UnsupportedEncodingException uee) {
-        throw new RuntimeException(uee);
-      }
+        int i = 1;
+        //out.write(String.format(Locale.ENGLISH, "%8d:%9d:%11.1f", task.taskID, totalHitCount.value + (totalHitCount.relation == TotalHits.Relation.GREATER_THAN_OR_EQUAL_TO ? "+" : ""), queueTimeNS/1000000.0).getBytes("UTF-8"));
+      //} catch (SocketException se) {
+      //  System.out.println("Ignore SocketException: " + se);
+      //  queue.clear();
+      //} catch (UnsupportedEncodingException uee) {
+      //  throw new RuntimeException(uee);
+      //}
     }
   }
 }
