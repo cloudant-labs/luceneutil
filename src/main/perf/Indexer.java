@@ -61,13 +61,23 @@ import org.apache.lucene.util.InfoStream;
 import org.apache.lucene.util.PrintStreamInfoStream;
 import org.apache.lucene.util.Version;
 
+import com.apple.foundationdb.Database;
+import com.apple.foundationdb.FDB;
+import com.apple.foundationdb.Transaction;
+import com.apple.foundationdb.tuple.Tuple;
+
 import perf.IndexThreads.Mode;
+import flucene.*;
 
 // javac -Xlint:deprecation -cp ../modules/analysis/build/common/classes/java:build/classes/java:build/classes/test-framework:build/classes/test:build/contrib/misc/classes/java perf/Indexer.java perf/LineFileDocs.java
 
 public final class Indexer {
 
+  public static final String DEFAULT_ROOT_PREFIX = "lucene";
+  public static final String DEFAULT_TEST_ROOT_PREFIX = "test_" + DEFAULT_ROOT_PREFIX;
+
   public static void main(String[] clArgs) throws Exception {
+
 
     StatisticsHelper stats = new StatisticsHelper();
     stats.startStatistics();
@@ -181,10 +191,14 @@ public final class Indexer {
     final String dirImpl = args.getString("-dirImpl");
     final String dirPath = args.getString("-indexPath") + "/index";
 
-    final Directory dir;
-    OpenDirectory od = OpenDirectory.get(dirImpl);
+    //final Directory dir;
+    //OpenDirectory od = OpenDirectory.get(dirImpl);
 
-    dir = od.open(Paths.get(dirPath));
+    //dir = od.open(Paths.get(dirPath));
+    FDB fdb = FDB.selectAPIVersion(600);
+    Database db = fdb.open();
+    FDBDirectory dir = new FDBDirectory(db, Tuple.from(DEFAULT_TEST_ROOT_PREFIX, "subidr"));
+
 
     final String analyzer = args.getString("-analyzer");
     final Analyzer a;
@@ -417,8 +431,9 @@ public final class Indexer {
 
     final TaxonomyWriter taxoWriter;
     if (facetFields.isEmpty() == false) {
-      taxoWriter = new DirectoryTaxonomyWriter(od.open(Paths.get(args.getString("-indexPath"), "facets")),
-                                               IndexWriterConfig.OpenMode.CREATE);
+      //taxoWriter = new DirectoryTaxonomyWriter(od.open(Paths.get(args.getString("-indexPath"), "facets")),
+      //                                         IndexWriterConfig.OpenMode.CREATE);
+      taxoWriter = null;
     } else {
       taxoWriter = null;
     }
