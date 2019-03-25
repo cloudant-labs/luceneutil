@@ -63,9 +63,19 @@ import org.apache.lucene.util.Version;
 
 import perf.IndexThreads.Mode;
 
+
+import com.apple.foundationdb.Database;
+import com.apple.foundationdb.FDB;
+import com.apple.foundationdb.Transaction;
+import com.apple.foundationdb.tuple.Tuple;
+import flucene.FDBDirectory;
+
 // javac -Xlint:deprecation -cp ../modules/analysis/build/common/classes/java:build/classes/java:build/classes/test-framework:build/classes/test:build/contrib/misc/classes/java perf/Indexer.java perf/LineFileDocs.java
 
 public final class Indexer {
+
+  public static final String DEFAULT_ROOT_PREFIX = "lucene";
+  public static final String DEFAULT_TEST_ROOT_PREFIX = "test_" + DEFAULT_ROOT_PREFIX;
 
   public static void main(String[] clArgs) throws Exception {
 
@@ -181,10 +191,17 @@ public final class Indexer {
     final String dirImpl = args.getString("-dirImpl");
     final String dirPath = args.getString("-indexPath") + "/index";
 
-    final Directory dir;
-    OpenDirectory od = OpenDirectory.get(dirImpl);
+    // final Directory dir;
+    // OpenDirectory od = OpenDirectory.get(dirImpl);
 
-    dir = od.open(Paths.get(dirPath));
+    // dir = od.open(Paths.get(dirPath));
+    FDB fdb = FDB.selectAPIVersion(600);
+    Database db = fdb.open();
+
+    // Transaction baseTxn = db.createTransaction();
+
+    FDBDirectory dir = new FDBDirectory(db, Tuple.from("lucene", "test"));
+
 
     final String analyzer = args.getString("-analyzer");
     final Analyzer a;
@@ -416,12 +433,12 @@ public final class Indexer {
     System.out.println("Index has " + w.getDocStats().maxDoc + " docs");
 
     final TaxonomyWriter taxoWriter;
-    if (facetFields.isEmpty() == false) {
-      taxoWriter = new DirectoryTaxonomyWriter(od.open(Paths.get(args.getString("-indexPath"), "facets")),
-                                               IndexWriterConfig.OpenMode.CREATE);
-    } else {
+    // if (facetFields.isEmpty() == false) {
+      // taxoWriter = new DirectoryTaxonomyWriter(od.open(Paths.get(args.getString("-indexPath"), "facets")),
+      //                                          IndexWriterConfig.OpenMode.CREATE);
+    // } else {
       taxoWriter = null;
-    }
+    // }
 
     // Fixed seed so group field values are always consistent:
     final Random random = new Random(17);
