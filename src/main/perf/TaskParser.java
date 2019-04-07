@@ -95,7 +95,7 @@ class TaskParser {
 
     final Task task;
     if (category.equals("Respell")) {
-      task = new RespellTask(new Term(fieldName, text));
+      task = null; //new RespellTask(new Term(fieldName, text));
     } else {
       if (text.length() == 0) {
         throw new RuntimeException("null query line");
@@ -369,6 +369,6 @@ class TaskParser {
       //task = new SearchTask(category, query2, sort, group, topN, doHilite, doStoredLoads, facets, doDrillSideways);
     }
 
-    return new RespellTask(new Term("fieldname", "text"));
+    return null; //new RespellTask(new Term("fieldname", "text"));
   }
 }

@@ -18,6 +18,7 @@ package perf;
  */
 
 
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -36,7 +37,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.codecs.Codec;
 import org.apache.lucene.codecs.DocValuesFormat;
 import org.apache.lucene.codecs.PostingsFormat;
-//import org.apache.lucene.codecs.lucene80.Lucene80Codec;
+import org.apache.lucene.codecs.lucene80.Lucene80Codec;
 import org.apache.lucene.facet.FacetsConfig;
 import org.apache.lucene.facet.taxonomy.TaxonomyWriter;
 import org.apache.lucene.facet.taxonomy.directory.DirectoryTaxonomyWriter;
@@ -67,7 +68,11 @@ import com.apple.foundationdb.Transaction;
 import com.apple.foundationdb.tuple.Tuple;
 
 import perf.IndexThreads.Mode;
-import flucene.*;
+import com.cloudant.fdblucene.*;
+import org.lumongo.util.TestHelper;
+import org.lumongo.storage.lucene.*;
+import com.mongodb.MongoClient;
+
 
 // javac -Xlint:deprecation -cp ../modules/analysis/build/common/classes/java:build/classes/java:build/classes/test-framework:build/classes/test:build/contrib/misc/classes/java perf/Indexer.java perf/LineFileDocs.java
 
@@ -75,6 +80,7 @@ public final class Indexer {
 
   public static final String DEFAULT_ROOT_PREFIX = "lucene";
   public static final String DEFAULT_TEST_ROOT_PREFIX = "test_" + DEFAULT_ROOT_PREFIX;
+  private static final String STORAGE_TEST_INDEX = "storageTest";
 
   public static void main(String[] clArgs) throws Exception {
 
@@ -191,13 +197,23 @@ public final class Indexer {
     final String dirImpl = args.getString("-dirImpl");
     final String dirPath = args.getString("-indexPath") + "/index";
 
-    //final Directory dir;
-    //OpenDirectory od = OpenDirectory.get(dirImpl);
+    final String dirType = args.getString("-dirType");
 
-    //dir = od.open(Paths.get(dirPath));
-    FDB fdb = FDB.selectAPIVersion(600);
-    Database db = fdb.open();
-    FDBDirectory dir = new FDBDirectory(db, Tuple.from(DEFAULT_TEST_ROOT_PREFIX, "subidr"));
+    final Directory dir;
+    if (dirType.equals("FDB")) {
+        FDB fdb = FDB.selectAPIVersion(600);
+        Database db = fdb.open();
+        //dir = new FDBDirectory(db, Tuple.from(DEFAULT_TEST_ROOT_PREFIX, "subdir"));
+        final Path path = FileSystems.getDefault().getPath(DEFAULT_TEST_ROOT_PREFIX, "subdir");
+        dir = FDBDirectory.open(db, path);
+    } else if (dirType.equals("Mongo")) {
+        MongoClient mongo = TestHelper.getMongo();
+        mongo.dropDatabase(TestHelper.TEST_DATABASE_NAME);
+        dir = new DistributedDirectory(new MongoDirectory(mongo, TestHelper.TEST_DATABASE_NAME, STORAGE_TEST_INDEX, false));
+    } else {
+        OpenDirectory od = OpenDirectory.get(dirImpl);
+        dir = od.open(Paths.get(dirPath));
+    }
 
 
     final String analyzer = args.getString("-analyzer");
@@ -396,7 +412,7 @@ public final class Indexer {
       iwc.setIndexDeletionPolicy(NoDeletionPolicy.INSTANCE);
     }
     
-//    final Codec codec = new Lucene80Codec() {
+    final Codec codec = new Lucene80Codec(); //{
 //        @Override
 //        public PostingsFormat getPostingsFormatForField(String field) {
 //          return PostingsFormat.forName(field.equals("id") ?
@@ -421,9 +437,11 @@ public final class Indexer {
 //        }
 //      };
 //
-//    iwc.setCodec(codec);
+    iwc.setCodec(codec);
 
     System.out.println("IW config=" + iwc);
+
+    //iwc.setInfoStream(System.out);
 
     IndexWriter w = new IndexWriter(dir, iwc);
 
@@ -500,7 +518,7 @@ public final class Indexer {
       IndexWriterConfig iwc2 = new IndexWriterConfig(a);
       iwc2.setMergeScheduler(getMergeScheduler(indexingFailed, useCMS, maxConcurrentMerges, disableIOThrottle));
       iwc2.setMergePolicy(getMergePolicy(mergePolicy, useCFS));
-      //iwc2.setCodec(codec);
+      iwc2.setCodec(codec);
       iwc2.setUseCompoundFile(useCFS);
       iwc2.setMaxBufferedDocs(maxBufferedDocs);
       iwc2.setRAMBufferSizeMB(ramBufferSizeMB);
@@ -525,7 +543,7 @@ public final class Indexer {
       w = null;
     }
 
-    if (doForceMerge) {
+    if (true) {
       long forceMergeStartMSec = System.currentTimeMillis();
       w.forceMerge(1);
       long forceMergeEndMSec = System.currentTimeMillis();
