@@ -884,11 +884,11 @@ class RunAlgs:
     #  raise RuntimeError('can\'t find core JAR file in %s' % ('%s/lucene/build/core' % path))
 
     #cp.append(core_jar_file)
-    cp.append('%s/lucene/build/core/classes/test' % path)
+    cp.append('%s/lucene/build/core/classes/java' % path)
     cp.append('%s/lucene/build/sandbox/classes/java' % path)
     cp.append('%s/lucene/build/misc/classes/java' % path)
     cp.append('%s/lucene/build/facet/classes/java' % path)
-    cp.append('/home/mike/src/lucene-c-boost/dist/luceneCBoost-SNAPSHOT.jar')
+    cp.append('/Users/tonysun/github/cloudant/fdblucene/target/fdblucene-1.0.0-SNAPSHOT.jar')
     if version == '4.0':
       cp.append('%s/lucene/build/analysis/common/classes/java' % path)
       cp.append('%s/lucene/build/analysis/icu/classes/java' % path)

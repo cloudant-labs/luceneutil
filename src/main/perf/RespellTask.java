@@ -42,7 +42,7 @@ final class RespellTask extends Task {
   public void go(IndexState state) throws IOException {
     final IndexSearcher searcher = state.mgr.acquire();
     try {
-      answers = state.spellChecker.suggestSimilar(term, 10, searcher.getIndexReader(), SuggestMode.SUGGEST_MORE_POPULAR);
+      // answers = state.spellChecker.suggestSimilar(term, 10, searcher.getIndexReader(), SuggestMode.SUGGEST_MORE_POPULAR);
     } finally {
       state.mgr.release(searcher);
     }
