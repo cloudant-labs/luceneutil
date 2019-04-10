@@ -38,8 +38,8 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ReferenceManager;
 import org.apache.lucene.search.TermQuery;
-//import org.apache.lucene.search.spell.DirectSpellChecker;
-//import org.apache.lucene.search.vectorhighlight.FastVectorHighlighter;
+import org.apache.lucene.search.spell.DirectSpellChecker;
+import org.apache.lucene.search.vectorhighlight.FastVectorHighlighter;
 import org.apache.lucene.util.Bits;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.FutureArrays;
@@ -49,9 +49,9 @@ import org.apache.lucene.util.bkd.BKDReader;
 
 class IndexState {
   public final ReferenceManager<IndexSearcher> mgr;
-  //public final DirectSpellChecker spellChecker;
+  public final DirectSpellChecker spellChecker;
   public final Query groupEndQuery;
-  //public final FastVectorHighlighter fastHighlighter;
+  public final FastVectorHighlighter fastHighlighter;
   public final boolean useHighlighter;
   public final String textFieldName;
   //public int[] docIDToID;
@@ -64,10 +64,10 @@ class IndexState {
   public final Map<Object, ThreadLocal<PointsPKLookupState>> pointsPKLookupStates = new HashMap<>();
   private SortedSetDocValuesReaderState sortedSetReaderState;
 
-  public IndexState(ReferenceManager<IndexSearcher> mgr, TaxonomyReader taxoReader, String textFieldName, String spellChecker,
+  public IndexState(ReferenceManager<IndexSearcher> mgr, TaxonomyReader taxoReader, String textFieldName, DirectSpellChecker spellChecker,
                     String hiliteImpl, FacetsConfig facetsConfig, Map<String,Integer> facetFields) throws IOException {
     this.mgr = mgr;
-    //this.spellChecker = spellChecker;
+    this.spellChecker = spellChecker;
     this.textFieldName = textFieldName;
     this.taxoReader = taxoReader;
     this.facetsConfig = facetsConfig;
@@ -75,12 +75,12 @@ class IndexState {
     
     groupEndQuery = new TermQuery(new Term("groupend", "x"));
     if (hiliteImpl.equals("FastVectorHighlighter")) {
-      //fastHighlighter = null;
+      fastHighlighter = null;
       useHighlighter = true;
     } else if (hiliteImpl.equals("PostingsHighlighter")) {
       throw new IllegalArgumentException("fix me!  switch to UnifiedHighlighter");
     } else if (hiliteImpl.equals("Highlighter")) {
-      //fastHighlighter = null;
+      fastHighlighter = null;
       useHighlighter = true;
     } else {
       throw new IllegalArgumentException("unrecognized -hiliteImpl \"" + hiliteImpl + "\"");

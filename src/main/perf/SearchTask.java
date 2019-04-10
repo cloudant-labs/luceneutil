@@ -273,7 +273,7 @@ final class SearchTask extends Task {
         */
       }
       if (hits != null) {
-        totalHitCount = hits.totalHits;
+        totalHitCount = (int) hits.totalHits.value;
 
         if (doStoredLoads) {
           for (int i = 0; i < hits.scoreDocs.length; i++) {
@@ -283,7 +283,7 @@ final class SearchTask extends Task {
         }
 
       } else if (groupsResultBlock != null) {
-        totalHitCount = new TotalHits(groupsResultBlock.totalHitCount, TotalHits.Relation.EQUAL_TO);
+        totalHitCount = (int) new TotalHits(groupsResultBlock.totalHitCount, TotalHits.Relation.EQUAL_TO).value;
       }
     } catch (Throwable t) {
       System.out.println("EXC: " + q);

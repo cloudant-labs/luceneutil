@@ -95,6 +95,8 @@ class LocalTaskSource implements TaskSource {
     final Map<String,Integer> catCounts = new HashMap<String,Integer>();
     final List<Task> newTasks = new ArrayList<Task>();
     for(Task task : tasks) {
+      System.out.println("Task: " + task);
+      if(task!=null) {
       final String cat = task.getCategory();
       Integer v = catCounts.get(cat);
       int catCount;
@@ -110,7 +112,9 @@ class LocalTaskSource implements TaskSource {
       }
       catCount++;
       catCounts.put(cat, catCount);
-      newTasks.add(task);
+      
+          newTasks.add(task);
+      }
     }
 
     return newTasks;
