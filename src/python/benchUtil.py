@@ -888,7 +888,6 @@ class RunAlgs:
     cp.append('%s/lucene/build/sandbox/classes/java' % path)
     cp.append('%s/lucene/build/misc/classes/java' % path)
     cp.append('%s/lucene/build/facet/classes/java' % path)
-    cp.append('/Users/tonysun/github/cloudant/fdblucene/target/fdblucene-1.0.0-SNAPSHOT.jar')
     if version == '4.0':
       cp.append('%s/lucene/build/analysis/common/classes/java' % path)
       cp.append('%s/lucene/build/analysis/icu/classes/java' % path)
