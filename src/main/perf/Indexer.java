@@ -200,20 +200,18 @@ public final class Indexer {
     final String dirType = args.getString("-dirType");
 
     final Directory dir;
-    // if (dirType.equals("FDB")) {
+    if (dirType.equals("FDB")) {
+        System.out.println("FDB");
         FDB fdb = FDB.selectAPIVersion(600);
         Database db = fdb.open();
         //dir = new FDBDirectory(db, Tuple.from(DEFAULT_TEST_ROOT_PREFIX, "subdir"));
         final Path path = FileSystems.getDefault().getPath(DEFAULT_TEST_ROOT_PREFIX, "subdir");
         dir = FDBDirectory.open(db, path);
-    // } else if (dirType.equals("Mongo")) {
-    //     MongoClient mongo = TestHelper.getMongo();
-    //     mongo.dropDatabase(TestHelper.TEST_DATABASE_NAME);
-    //     dir = new DistributedDirectory(new MongoDirectory(mongo, TestHelper.TEST_DATABASE_NAME, STORAGE_TEST_INDEX, false));
-    // } else {
-    //     OpenDirectory od = OpenDirectory.get(dirImpl);
-    //     dir = od.open(Paths.get(dirPath));
-    // }
+    } else {
+        System.out.println("Using FileSystem");
+        OpenDirectory od = OpenDirectory.get(dirImpl);
+        dir = od.open(Paths.get(dirPath));
+    }
 
 
     final String analyzer = args.getString("-analyzer");

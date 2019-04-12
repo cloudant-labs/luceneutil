@@ -25,6 +25,7 @@ package perf;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -76,6 +77,15 @@ import org.apache.lucene.util.Version;
 
 import perf.IndexThreads.Mode;
 
+import com.apple.foundationdb.Database;
+import com.apple.foundationdb.FDB;
+import com.apple.foundationdb.Transaction;
+import com.apple.foundationdb.tuple.Tuple;
+
+
+import perf.IndexThreads.Mode;
+import com.cloudant.fdblucene.*;
+
 // TODO
 //   - post queries on pao
 //   - fix pk lookup to tolerate deletes
@@ -90,6 +100,10 @@ import perf.IndexThreads.Mode;
 
 @SuppressWarnings("deprecation")
 public class SearchPerfTest {
+
+  public static final String DEFAULT_ROOT_PREFIX = "lucene";
+  public static final String DEFAULT_TEST_ROOT_PREFIX = "test_" + DEFAULT_ROOT_PREFIX;
+  private static final String STORAGE_TEST_INDEX = "storageTest";
 
   // ReferenceManager that never changes its searcher:
   private static class SingleIndexSearcher extends ReferenceManager<IndexSearcher> {
@@ -180,8 +194,13 @@ public class SearchPerfTest {
       }
       */
 
-    dir0 = od.open(Paths.get(dirPath));
+    // dir0 = od.open(Paths.get(dirPath));
 
+    FDB fdb = FDB.selectAPIVersion(600);
+    Database db = fdb.open();
+        //dir = new FDBDirectory(db, Tuple.from(DEFAULT_TEST_ROOT_PREFIX, "subdir"));
+    final Path path = FileSystems.getDefault().getPath(DEFAULT_TEST_ROOT_PREFIX, "subdir");
+    dir0 = FDBDirectory.open(db, path);
     // TODO: NativeUnixDir?
 
     final String analyzer = args.getString("-analyzer");
